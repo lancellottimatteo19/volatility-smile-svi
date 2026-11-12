@@ -1,24 +1,29 @@
-# Volatility Smile e calibrazione SVI
+# Volatility Smile and SVI Calibration
 
-Estrazione della volatilità implicita da prezzi di opzioni europee e calibrazione del modello **SVI (Stochastic Volatility Inspired)** di Jim Gatheral, con controlli di assenza di arbitraggio.
+Implied volatility extracted from European option prices, and a calibration of Jim Gatheral's **SVI (Stochastic
+Volatility Inspired)** model with no-arbitrage constraints.
 
-## Contenuto — [`svi_smile.ipynb`](svi_smile.ipynb)
+## Contents — [`svi_smile.ipynb`](svi_smile.ipynb)
 
-* Prezzo **Black-Scholes** delle call europee e inversione numerica con il metodo di **Brent** (`scipy.optimize.brentq`) per ottenere la **volatilità implicita**, scartando i prezzi fuori dai limiti di non arbitraggio.
-* Calibrazione della parametrizzazione **raw SVI** della varianza totale
+* **Black-Scholes** pricing of European calls and numerical inversion with **Brent's method**
+  (`scipy.optimize.brentq`) to obtain the **implied volatility**, discarding prices outside the no-arbitrage
+  bounds.
+* Calibration of the **raw SVI** parameterisation of total implied variance
   $w(k) = a + b\left(\rho (k-m) + \sqrt{(k-m)^2 + \sigma^2}\right)$
-  con minimi quadrati vincolati (`SLSQP`):
-  * varianza totale minima non negativa $a + b \sigma\sqrt{1-\rho^2} \ge 0$;
-  * pendenza delle ali $b(1+|\rho|) \le 2$ (formula dei momenti di Roger Lee).
-* Verifica a posteriori dell'assenza di **arbitraggio a farfalla** con la condizione di Durrleman $g(k) \ge 0$.
+  by constrained least squares (`SLSQP`):
+  * non-negative minimum total variance, $a + b \sigma\sqrt{1-\rho^2} \ge 0$;
+  * wing slopes $b(1+|\rho|) \le 2$ (Roger Lee's moment formula).
+* An ex-post check for **butterfly arbitrage** with Durrleman's condition $g(k) \ge 0$.
 
-## Risultati
+## Results
 
-Su 25 strike sintetici con rumore sui prezzi, il fit ha un errore quadratico medio di 0.0097 rispetto alle volatilità di mercato e di 0.0073 rispetto alla volatilità vera usata per generarle; il minimo di $g(k)$ su $k \in [-1.5, 1.5]$ è 0.26, quindi lo smile calibrato è privo di arbitraggio a farfalla.
+On 25 synthetic strikes with noisy prices, the fit has a root-mean-square error of 0.0097 against the market
+implied volatilities and 0.0073 against the true volatility used to generate them. The minimum of $g(k)$ over
+$k \in [-1.5, 1.5]$ is 0.26, so the calibrated smile is free of butterfly arbitrage.
 
-## ▶️ Esecuzione
+## How to run
 
-Serve Python 3.9 o successivo.
+Requires Python 3.9 or later.
 
 ```bash
 git clone https://github.com/lancellottimatteo19/volatility-smile-svi.git
@@ -27,4 +32,4 @@ pip install -r requirements.txt
 jupyter lab
 ```
 
-I notebook sono salvati con gli output, quindi grafici e risultati si vedono anche direttamente su GitHub.
+The notebook is saved with its outputs, so charts and results are visible directly on GitHub.
